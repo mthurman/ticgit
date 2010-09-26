@@ -2,6 +2,7 @@ module TicGit
   class NoRepoFound < StandardError;end
   class Base
 
+    #attr_reader :grit, logger
     attr_reader :git, :logger
     attr_reader :tic_working, :tic_index
     attr_reader :tickets, :last_tickets, :current_ticket  # saved in state
@@ -9,7 +10,7 @@ module TicGit
     attr_reader :state, :config_file
 
     def initialize(git_dir, opts = {})
-      #git = Grit::Repo.new(find_repo(git_dir))
+      #grit = Grit::Repo.new(find_repo(git_dir))
       @git = Git.open(find_repo(git_dir))
 
       @logger = opts[:logger] || Logger.new(STDOUT)
