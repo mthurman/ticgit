@@ -189,8 +189,10 @@ module TicGit
     def ticket_recent(ticket_id = nil)
       if ticket_id
         t = ticket_revparse(ticket_id)
+        #return grit.commits('ticgit, 30).path(t)
         return git.log.object('ticgit').path(t)
       else
+        #return grit.commits('ticgit, 30)
         return git.log.object('ticgit')
       end
     end
