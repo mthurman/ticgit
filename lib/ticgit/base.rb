@@ -9,7 +9,9 @@ module TicGit
     attr_reader :state, :config_file
 
     def initialize(git_dir, opts = {})
+      #git = Grit::Repo.new(find_repo(git_dir))
       @git = Git.open(find_repo(git_dir))
+
       @logger = opts[:logger] || Logger.new(STDOUT)
       @last_tickets = []
 
