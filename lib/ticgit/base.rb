@@ -280,6 +280,21 @@ module TicGit
     def load_tickets
       @tickets = {}
 
+      #bs = git.heads.collect{|branch| branch.name }
+      # Note:  There is a difference between the git version,
+      #
+      #   git.lib.branches_all.map{|b|b.first}
+      #
+      # compared to the new version,
+      #
+      #   git.heads.collect{|branch| branch.name }
+      #
+      # the first one will return an array with the names of
+      # all branches, as if you had done 'git branch -a' where
+      # the second one will return an array with the names of
+      # branches as if you had done 'git branch'. It looks like
+      # this is only being done to check for the ticgit branch,
+      # so this shouldn't be a problem.
       bs = git.lib.branches_all.map{|b| b.first }
 
       unless bs.include?('ticgit') && File.directory?(@tic_working)
