@@ -274,9 +274,14 @@ module TicGit
 
     def sync_tickets      
       in_branch(false) do 
-         git.pull('origin','origin/ticgit')
-         git.push('origin', 'ticgit:ticgit')
-         puts "Tickets synchronized."
+        #Checking Grit's documentation shows no alternative for pushing and
+        #pulling.  Calling `git push` and `git pull` could be dangerous if
+        #all our other operations are done through the API, this feature should
+        #be disabled if we switch to Grit unless testing can prove calling
+        #`git push/pull` wouldn't be detrimental.
+        git.pull('origin','origin/ticgit')
+        git.push('origin', 'ticgit:ticgit')
+        puts "Tickets synchronized."
       end
     end
 
