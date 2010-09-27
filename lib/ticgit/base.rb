@@ -309,6 +309,16 @@ module TicGit
         init_ticgit_branch(bs.include?('ticgit'))
       end
 
+      #tree = grit.commits('ticgit').first.tree)
+      #tree.each { |blob_or_tree|
+      #  next unless blob_or_tree.class.to_s[/::.+?$/i].gsub('::','')=="Tree"
+      #  blob_or_tree.contents.each {|files|
+      #    next unless files.class.to_s[/::.+?$/i].gsub('::','')=="Blob"
+      #    @tickets[blob_or_tree.name] ||= {'files' => [] }
+      #    @tickets[blob_or_tree.name]['files'] << [files.name, files.id]
+      #  }
+      #}
+
       tree = git.lib.full_tree('ticgit')
       tree.each do |t|
         data, file = t.split("\t")
@@ -346,6 +356,7 @@ module TicGit
 
       needs_checkout = true unless File.file?('.hold')
 
+      #old_current = Grit::Head.current(grit).name
       old_current = git.lib.branch_current
       begin
         git.lib.change_head_branch('ticgit')
