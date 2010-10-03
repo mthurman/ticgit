@@ -1,18 +1,21 @@
 require File.expand_path(File.dirname(__FILE__) + "/../lib/ticgit")
 require 'fileutils'
 require 'logger'
+require 'tempfile'
+
+TICGIT_HISTORY = StringIO.new
 
 module TicGitSpecHelper
 
   def setup_new_git_repo
-    tempdir = Dir.mktmpdir
+    tempdir = Dir.mktmpdir 'ticgit-gitdir-'
     Dir.chdir(tempdir) do
-      g = Git.init
+      git = Git.init
       new_file('test', 'content')
       Dir.mkdir('subdir')
       new_file('subdir/testfile', 'content2')
-      g.add
-      g.commit('first commit')
+      git.add
+      git.commit('first commit')
     end
     tempdir
   end
@@ -21,18 +24,41 @@ module TicGitSpecHelper
   end
 
   def test_opts
-    temp = Tempfile.new('ticdir')
-    p = temp.path
-    temp.unlink
-    Dir.mkdir(p)
-    logger = Logger.new(Tempfile.new('ticgit-log'))
-    { :tic_dir => p, :logger => logger }
+    tempdir = Dir.mktmpdir 'ticgit-ticdir-'
+    logger = Logger.new(Tempfile.new('ticgit-log-'))
+    { :tic_dir => tempdir, :logger => logger }
   end
 
 
   def new_file(name, contents)
     File.open(name, 'w') do |f|
       f.puts contents
+    end
+  end
+
+  def format_expected(string)
+    string.strip.enum_for(:each_line).map{|line| line.strip }
+  end
+
+  def cli(*args, &block)
+    TICGIT_HISTORY.truncate 0
+    TICGIT_HISTORY.rewind
+
+    ticgit = TicGit::CLI.new(args.flatten, @path, TICGIT_HISTORY)
+    ticgit.parse_options!
+    ticgit.execute!
+
+    replay_history(&block)
+  rescue SystemExit => error
+    replay_history(&block)
+  end
+
+  def replay_history
+    TICGIT_HISTORY.rewind
+    return unless block_given?
+
+    while line = TICGIT_HISTORY.gets
+      yield(line.strip)
     end
   end
 
