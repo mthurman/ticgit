@@ -7,8 +7,8 @@ module TicGit
     attr_accessor :comments, :tags, :attachments # arrays
 
     def initialize(base, options = {})
-      options[:user_name] ||= base.git.config('user.name')
-      options[:user_email] ||= base.git.config('user.email')
+      options[:user_name] ||= base.grit.config['user.name']
+      options[:user_email] ||= base.grit.config['user.email']
 
       @base = base
       @opts = options || {}
