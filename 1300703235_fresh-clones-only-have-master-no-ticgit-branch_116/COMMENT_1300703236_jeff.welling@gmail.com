@@ -1,0 +1,1 @@
+After freshly cloning a new repository typically the only branch you have is master.  Before creating the ticgit branch, TicGit should check to see if there is an origin/ticgit or origin/ticgit-ng and should branch from that if it exists.
