@@ -7,8 +7,14 @@ module TicGitNG
     attr_accessor :comments, :tags, :attachments # arrays
 
     def initialize(base, options = {})
-      options[:user_name] ||= base.grit.config['user.name']
-      options[:user_email] ||= base.grit.config['user.email']
+      # FIXME: what/where/who/how changed config to hash?
+      if (cfg = base.grit.config).is_a? Hash
+        options[:user_name] ||= cfg["user.name"]
+        options[:user_email] ||= cfg["user.email"]
+      else
+        options[:user_name] ||= cfg("user.name")
+        options[:user_email] ||= cfg("user.email")
+      end
 
       @base = base
       @opts = options || {}
