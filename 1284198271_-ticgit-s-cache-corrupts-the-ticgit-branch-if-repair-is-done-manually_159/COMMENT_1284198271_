@@ -1,0 +1,2 @@
+
+Ticgit stores a cache in ~/.ticgit to help things up.  This cache can cause corruption though if you ever have to do manual repair on the ticgit branch yourself.  The next time you run ti, if you don't first delete the cache before running ti, it will overwrite your changes and leave your branch in an undefined state.

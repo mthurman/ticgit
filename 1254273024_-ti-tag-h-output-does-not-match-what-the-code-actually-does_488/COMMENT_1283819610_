@@ -1,0 +1,1 @@
+The syntax `ti tag tic_id 'bug'` where tic_id is the hash for the ticket doesn't work either.
