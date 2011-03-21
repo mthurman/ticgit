@@ -1,1 +1,0 @@
-As of commit ce6a659547d55c7f9eb34622972da5a9b843f885, reset_ticgit is called at the start of the ticket_show command and ticket_list command, meaning either a show command or list command will trigger regeneration of the cache, and thus should reveal any freshly-merged changes.State resolved.

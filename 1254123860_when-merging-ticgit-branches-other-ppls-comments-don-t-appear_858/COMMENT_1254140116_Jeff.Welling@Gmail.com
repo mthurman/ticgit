@@ -1,1 +1,0 @@
-Tried to look at fixing it by automatically removing ~/.ticgit basically before every run but of course that didn't work, as that directory is required for tracking your state (which ticid your on, etc).  Boo-urns.  Emailed schacon@gmail.com inquiring about the state of the tools to help with this that he mentioned in google groups, waiting for response.
