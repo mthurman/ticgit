@@ -2,18 +2,20 @@ module TicGitNG
   class NoRepoFound < StandardError;end
   class Base
 
-    attr_reader :git, :logger
+    attr_reader :git, :logger, :repo
     attr_reader :tic_working, :tic_index, :tic_dir
     attr_reader :last_tickets, :current_ticket  # saved in state
     attr_reader :config
     attr_reader :state, :config_file
 
     def initialize(git_dir, opts = {})
+      @repo = Rugged::Repository.new(find_repo(git_dir))
       @git = Git.open(find_repo(git_dir))
       @logger = opts[:logger] || Logger.new(STDOUT)
       @last_tickets = []
 
-      proj = Ticket.clean_string(@git.dir.path)
+      # proj = Ticket.clean_string(@git.dir.path)
+      proj = Ticket.clean_string(find_repo(git_dir))
 
       @tic_dir = opts[:tic_dir] || "~/.#{which_branch?}"
       @tic_working = opts[:working_directory] || File.expand_path(File.join(@tic_dir, proj, 'working'))
@@ -37,9 +39,9 @@ module TicGitNG
     end
 
     def find_repo(dir)
-      full = File.expand_path(dir)
+      full = File.join(File.expand_path(dir), ".git")
       ENV["GIT_WORKING_DIR"] || loop do
-        return full if File.directory?(File.join(full, ".git"))
+        return full if File.directory? full
         raise NoRepoFound if full == full=File.dirname(full)
       end
     end
