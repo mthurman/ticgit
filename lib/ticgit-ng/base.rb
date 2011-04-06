@@ -10,12 +10,12 @@ module TicGitNG
 
     def initialize(git_dir, opts = {})
       @repo = Rugged::Repository.new(find_repo(git_dir))
-      @git = Git.open(find_repo(git_dir))
+      @git = Git.open(File.dirname(find_repo(git_dir)))
       @logger = opts[:logger] || Logger.new(STDOUT)
       @last_tickets = []
 
       # proj = Ticket.clean_string(@git.dir.path)
-      proj = Ticket.clean_string(find_repo(git_dir))
+      proj = Ticket.clean_string(File.dirname(find_repo(git_dir)))
 
       @tic_dir = opts[:tic_dir] || "~/.#{which_branch?}"
       @tic_working = opts[:working_directory] || File.expand_path(File.join(@tic_dir, proj, 'working'))
@@ -280,6 +280,7 @@ module TicGitNG
     end
 
     def sync_tickets(repo='origin', push=true, verbose=true )
+      # FIXME: (upstream) Can't do remote operations yet with rugged
       puts "Fetching #{repo}" if verbose
       @git.fetch(repo)
       puts "Syncing tickets with #{repo}" if verbose
@@ -372,11 +373,11 @@ module TicGitNG
       File.open(name, 'w+'){|f| f.puts(contents) }
     end
     def which_branch?
-      branches=@git.branches.local.map {|b| b.name}
-      if branches.include? 'ticgit-ng'
-        return 'ticgit-ng'
-      else
-        return 'ticgit'
+      begin
+        Rugged::Reference.lookup(@repo, "refs/heads/ticgit-ng")
+        "ticgit-ng"
+      rescue RuntimeError
+        "ticgit"
       end
       #If has ~/.ticgit dir, and 'ticgit' branch
       #If has ~/.ticgit-ng dir, and 'ticgit-ng' branch, and not ~/.ticgit dir and not 'ticgit' branch
