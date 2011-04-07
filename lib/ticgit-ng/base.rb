@@ -10,6 +10,10 @@ module TicGitNG
 
     def initialize(git_dir, opts = {})
       @repo = Rugged::Repository.new(find_repo(git_dir))
+      # This will be useful that way we don't have to worry about switching branches
+      @base_commit = Rugged::Commit.lookup(@repo,
+        Rugged::Reference.lookup(@repo, "refs/heads/#{which_branch?}").target)
+      
       @git = Git.open(File.dirname(find_repo(git_dir)))
       @logger = opts[:logger] || Logger.new(STDOUT)
       @last_tickets = []
